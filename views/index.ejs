@@ -1,0 +1,263 @@
+<script>
+
+window.addEventListener("DOMContentLoaded", () => {
+
+    if ("<%= messageFailed %>" == "true")
+    {
+        alert("something went wrong, please try again");   
+    }
+
+    const chatbox = document.getElementById("chatbox");
+
+    chatbox.scrollTop = chatbox.scrollHeight;
+    
+});
+
+</script>
+
+<div class="container">
+
+    <div class="col">
+
+        <div class="row" style="height: 20rem">
+
+            <h2>Study Planner</h2>
+
+            <ul style="overflow-y: auto; height: 10rem; border: 1px solid black">
+
+                <% studyPlanner.forEach((obj) => { %>
+
+                    <li>Topic: <%= obj["topicName"] %>; No. questions: <%= obj["noQuestions"] %>; Est. time: <%= obj["estTime"] %> min
+                        <form action="/" method="post">
+                            <input type="hidden" id="requestType" name="requestType" value="add-to-tracker">
+                            <input type="hidden" id="logData" name="logData" value='{"id": <%= obj["id"] %>, "topicName":"<%= obj["topicName"] %>","noQuestions":<%= obj["noQuestions"] %>,"timeTaken":<%= obj["estTime"] %>}'> 
+                            <button type="submit">Complete</button>
+                        </form></li>
+
+                <% }); %>
+
+            </ul>
+
+            <form action="/" method="post">
+
+                <input type="text" id="topicName" name="topicName" placeholder="Topic name" required>
+
+                <input type="number" id="noQuestions" name="noQuestions" placeholder="No. questions to solve" required>
+
+                <input type="number" id="estTime" name="estTime" placeholder="Estimated time (min)" required>
+
+                <input type="hidden" id="requestType" name="requestType" value="add-to-study-planner">
+
+                <button type="submit" style="margin-top: 0.25rem; padding: 0rem 2rem 0rem 2rem">Add</button>
+
+            </form>
+
+        </div>
+
+        <div class="row" style="height: 20rem">
+
+            <h2>Weak Areas</h2>
+
+            <ul style="height:11rem; overflow-y: auto; border: 1px solid black; padding-top: 0.5rem">
+
+                <% weak.forEach( (obj) => { %>
+
+                    <li>
+                        <div style="display: flex;">
+
+                            <% if (obj["priority"] == "high") { %>
+                            <b><%= obj["name"] %> - High priority</b>
+                            <% } else if (obj["priority"] == "medium") { %>
+                                <i><%= obj["name"] %></i>
+                            <% } else { %>
+                                <%= obj["name"] %>
+                            <% } %>
+
+                            <form method="post" action="/">
+                                <input type="hidden" id="requestType" name="requestType" value="add-to-tracker">
+
+                                <input type="hidden" id="logData" name="logData" value=' { "id" : <%= obj["id"] %>, "name": "<%= obj["name"] %>" } '>
+
+                                <button type="submit" style="margin-left:0.5rem">Master</button>
+                            </form>
+
+                        </div>
+                        
+                    </li>
+                
+                <% }); %>
+
+            </ul>
+
+            <form action="/" method="post">
+
+                <input type="hidden" id="requestType" name="requestType" value="add-to-weak-areas">
+
+                <input type="text" id="weakName" name="weakName" placeholder="Weak topic" required>
+
+                <input type="radio" id="priority" name="priority" value="high">High
+                <input type="radio" id="priority" name="priority" value="medium">Medium
+                <input type="radio" id="priority" name="priority" value="low">Low
+
+                <button type="submit" style="margin-left:0.5rem">Add</button>
+     
+            </form>
+
+        </div>
+
+    </div>
+
+    <div class="col">
+
+        <div class="row" style="height: 20rem; overflow-y: auto;">
+
+            <h2>Tracker (Complete tasks and master weak areas)</h2>
+
+            <ul style="overflow-y: auto; border: 1px solid black; height: 15rem;">
+
+                <% tracker.forEach( (log) => { %>
+
+                    <b><%= new Date(log["date"]).toISOString().slice(0, 10) %></b>
+
+                    <% log["content"].forEach( (topic) => { %>
+
+                    <% if (topic["id"] <= 100000) { %>
+
+                    <li><b><%= topic["topicName"] %></b> - <%= topic["noQuestions"] %> questions, took <%= topic["timeTaken"] %> mins</li>
+
+                    <% } else if (topic["id"] > 100000) { %>
+
+                    <li>Mastered weak topic - <b><%= topic["name"] %></b></li>
+
+                    <% } %>
+
+                    <% }); %>
+
+                    <br>
+
+                <% }); %>
+
+            </ul>
+
+            <form method="post" action="/" style="display: flex; justify-content: center; align-items: center; gap: 5%;">
+                <button type="submit" id="requestType" name="requestType" value="clear-tracker" style="width: 47.5%; margin-top: 0.5rem;">Clear</button>
+                <button type="button" style="width: 47.5%; margin-top: 0.5rem;">Statistics (not in mvp)</button>
+            </form>
+
+        </div>
+
+        <div class="row" style="height: 20rem">
+
+            <h2>Motivational quotes</h2>
+
+            <ul style="height:11rem; overflow-y: auto; border: 1px solid black; padding-top: 0.5rem">
+
+                <% quotes.forEach( (quote) => { %>
+
+                <li>
+
+                    <div style="display: flex;">
+                        
+                        <%= quote["quote"] %>
+
+                        <form method="post" action="/">
+
+                            <input type="hidden" id="requestType" name="requestType" value="remove-from-quotes">
+
+                            <input type="hidden" id="quoteRemoveId" name="quoteRemoveId" value=<%= quote['id'] %>>
+
+                            <button type="submit" style="margin-left:0.5rem">Remove</button>
+
+                        </form>
+
+                    </div>
+                    
+                </li>
+
+                <% }); %>
+            </ul>
+
+            <form action="/" method="post">
+
+                <input type="hidden" id="requestType" name="requestType" value="add-to-quotes">
+
+                <input type="text" id="quote" name="quote" style="width: 75%" placeholder="Your motivational quote" required>
+
+                <button type="submit" style="margin-left:0.5rem; width: 22%">Add</button>
+
+                <div style="display: flex">
+                <button type="button" style="width: 50%; margin-top: 0.5rem;" onclick="document.getElementById('quote').value = 'Don\'t give up!'">Don't give up!</button>
+
+                <button type="button" style="width: 50%; margin-top: 0.5rem; margin-left: 5%" onclick="document.getElementById('quote').value = 'Never stop learning!'">Never stop learning!</button>
+                </div>
+
+            </form>
+        </div>
+
+    </div>
+
+    <div class="col">
+
+        <div class="row" style="height: 45rem">
+
+            <h2>Your AI Assistant</h2>
+
+            <div class="chatbox" style="height: 30rem; border: 1px solid black; 
+            display: flex; flex-direction: column; background-color: beige; overflow-y: auto" id="chatbox">
+
+                <% msgs.forEach( (msg) => { %>
+
+                    <% if (msg["role"] == "user") { %>
+
+                        <div style=
+                        "display: flex; flex-direction: row; justify-content: right; margin: 0.5rem;">
+
+                            <div style="border: 1px solid rgb(2, 255, 94); border-radius: 5px; padding: 0.5rem; background-color: rgb(2, 255, 94);  max-width: 15rem">
+
+                                <%= msg["parts"][0]["text"] %>
+
+                            </div>
+                            
+                        </div>
+
+                    <% } else { %>
+
+                        <div style=
+                        "display: flex; flex-direction: row; justify-content: left; margin: 0.5rem; ">
+
+                            <div style="border: 1px solid white; border-radius: 5px; padding: 0.5rem; background-color: white; max-width: 23rem">
+
+                                <md-block><%= msg["parts"][0]["text"] %></md-block>
+
+                            </div>
+                            
+                        </div>
+
+                    <% } %>
+
+                <% }); %>
+
+            </div>
+
+            <form action="/" method="post" id="chatForm">
+
+                <textarea id="msg" name="msg" rows=5 style="width: 100%; margin-top: 1rem" placeholder="Message (only subject related)"></textarea>
+
+                <div style="display: flex; justify-content: center; align-items: center; gap: 5%">
+
+                    <button type="submit" id="requestType" name="requestType" value="send-to-ai" style="width: 30%; margin-top: 1rem">Send</button>
+
+                    <button type="button" onclick="document.getElementById('msg').value='';" style="width: 47.5%; margin-top: 1rem">Clear Message</button>
+
+                    <button type="submit" id="requestType" name="requestType" value="clear-chat" style="width: 30%; margin-top: 1rem">Clear chat</button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
