@@ -116,7 +116,7 @@ router.post('/', async function(req, res) {
 
         else if (requestType == "send-to-ai")
         {
-            return ai.chats.create({model: "gemini-3.8-flash", history: theJson["msgs"]})
+            return ai.chats.create({model: "gemini-3.1-flash-lite", history: theJson["msgs"]})
             .sendMessage({message: `Answer the question clearly. Bolden out the formulae. Do not use latex (and dont mention u r using latex) Message: ${msg}`})
             .then((resp) => {
 
