@@ -44,7 +44,7 @@ async function writeJSONFile(filePath, jsonObject)
 
 router.get('/', (req, res) => {
 
-    readJSONFile("server/config/database.json").then( (theJson) => {
+    readJSONFile("../config/database.json").then( (theJson) => {
 
         res.render("index.ejs", {studyPlanner: theJson["studyPlanner"], tracker: theJson["tracker"], 
             weak: theJson["weak"], quotes: theJson["quotes"], msgs: theJson["msgs"], messageFailed: false});
