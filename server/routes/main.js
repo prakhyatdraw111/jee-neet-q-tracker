@@ -13,6 +13,7 @@ const katex = require("katex");
 
 const path = require("path");
 
+const filePath = path.join(process.cwd(), "server", "config", "database.json");
 
 async function readJSONFile(filePath)
 {
@@ -46,8 +47,6 @@ async function writeJSONFile(filePath, jsonObject)
 
 router.get('/', (req, res) => {
 
-    const filePath = path.join(process.cwd(), "server", "config", "database.json");
-
     readJSONFile(filePath).then( (theJson) => {
 
         res.render("index.ejs", {studyPlanner: theJson["studyPlanner"], tracker: theJson["tracker"], 
@@ -59,7 +58,7 @@ router.get('/', (req, res) => {
 
 router.post('/', async function(req, res) {
 
-    readJSONFile("server/config/database.json").then( (theJson) => {
+    readJSONFile(filePath).then( (theJson) => {
 
         const { requestType, topicName, noQuestions, 
             estTime, logData, weakName, priority, 
@@ -130,7 +129,7 @@ router.post('/', async function(req, res) {
 
                 theJson["msgs"].push({role: "model", parts: [{text: resp.text}]});
 
-                writeJSONFile("server/config/database.json", theJson);
+                writeJSONFile(filePath, theJson);
 
                 res.render("index.ejs", {studyPlanner: theJson["studyPlanner"], tracker: theJson["tracker"], 
                     weak: theJson["weak"], quotes: theJson["quotes"], msgs: theJson["msgs"], messageFailed: false});
@@ -154,7 +153,7 @@ router.post('/', async function(req, res) {
             theJson["tracker"] = [];
         }
 
-        const filePath = path.join(process.cwd(), "server", "config", "database.json");
+        
 
         writeJSONFile(filePath, theJson);
 
