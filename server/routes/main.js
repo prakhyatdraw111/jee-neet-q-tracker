@@ -15,6 +15,8 @@ const path = require("path");
 
 const filePath = path.join(process.cwd(), "server", "config", "database.json");
 
+const tmpFilePath = path.join(process.cwd(), "tmp", "database.json");
+
 async function readJSONFile(filePath)
 {
     try
@@ -36,7 +38,7 @@ async function writeJSONFile(filePath, jsonObject)
 {
     try
     {
-        await writeFile(filePath, JSON.stringify(jsonObject), "utf8");
+        await writeFile(tempFilePath, JSON.stringify(jsonObject), "utf8");
     }
 
     catch (error)
@@ -58,7 +60,7 @@ router.get('/', (req, res) => {
 
 router.post('/', async function(req, res) {
 
-    readJSONFile(filePath).then( (theJson) => {
+    readJSONFile(tempFilePath).then( (theJson) => {
 
         const { requestType, topicName, noQuestions, 
             estTime, logData, weakName, priority, 
