@@ -11,6 +11,8 @@ const ai = new GoogleGenAI();
 
 const katex = require("katex");
 
+const path = require("path");
+
 
 async function readJSONFile(filePath)
 {
@@ -44,7 +46,9 @@ async function writeJSONFile(filePath, jsonObject)
 
 router.get('/', (req, res) => {
 
-    readJSONFile("./server/config/database.json").then( (theJson) => {
+    const filePath = path.join(process.cwd(), "server", "config", "database.json");
+
+    readJSONFile(filePath).then( (theJson) => {
 
         res.render("index.ejs", {studyPlanner: theJson["studyPlanner"], tracker: theJson["tracker"], 
             weak: theJson["weak"], quotes: theJson["quotes"], msgs: theJson["msgs"], messageFailed: false});
