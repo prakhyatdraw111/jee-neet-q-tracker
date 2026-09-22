@@ -25,7 +25,7 @@ async function readJSONFile(filePath)
 
     catch (error)
     {
-        console.log("error reading file", error);
+        console.log("error reading file", error, "\n", process.cwd());
     }
 }
 
