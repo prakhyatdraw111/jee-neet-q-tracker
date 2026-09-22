@@ -25,7 +25,7 @@ async function readJSONFile(filePath)
 
     catch (error)
     {
-        console.log("error reading file", error, "\n", process.cwd());
+        console.log("error reading file", error, "\n");
     }
 }
 
@@ -44,7 +44,7 @@ async function writeJSONFile(filePath, jsonObject)
 
 router.get('/', (req, res) => {
 
-    readJSONFile("../config/database.json").then( (theJson) => {
+    readJSONFile("./server/config/database.json").then( (theJson) => {
 
         res.render("index.ejs", {studyPlanner: theJson["studyPlanner"], tracker: theJson["tracker"], 
             weak: theJson["weak"], quotes: theJson["quotes"], msgs: theJson["msgs"], messageFailed: false});
