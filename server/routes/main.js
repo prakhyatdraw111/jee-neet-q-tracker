@@ -154,7 +154,9 @@ router.post('/', async function(req, res) {
             theJson["tracker"] = [];
         }
 
-        writeJSONFile("server/config/database.json", theJson);
+        const filePath = path.join(process.cwd(), "server", "config", "database.json");
+
+        writeJSONFile(filePath, theJson);
 
         res.render("index.ejs", {studyPlanner: theJson["studyPlanner"], tracker: theJson["tracker"], 
             weak: theJson["weak"], quotes: theJson["quotes"], msgs: theJson["msgs"], messageFailed: false});
