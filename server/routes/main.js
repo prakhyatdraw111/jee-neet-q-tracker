@@ -15,7 +15,7 @@ const path = require("path");
 
 const filePath = path.join(process.cwd(), "server", "config", "database.json");
 
-const tmpFilePath = path.join(process.cwd(), "tmp", "database.json");
+const tempFilePath = path.join(process.cwd(), "tmp", "database.json");
 
 async function readJSONFile(filePath)
 {
