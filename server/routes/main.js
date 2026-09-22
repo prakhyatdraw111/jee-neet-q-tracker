@@ -41,7 +41,7 @@ async function writeJSONFile(filePath, jsonObject)
 
     catch (error)
     {
-        console.log("error writing file");
+        console.log("error writing file", error);
     }
 }
 
