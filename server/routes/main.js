@@ -9,47 +9,40 @@ const router = express.Router();
 
 const ai = new GoogleGenAI();
 
-const katex = require("katex");
-
 const path = require("path");
 
 const filePath = path.join(process.cwd(), "server", "config", "database.json");
 
-const tempFilePath = path.join(process.cwd(), "tmp", "database.json");
+const {put, get} = require("@vercel/blob");
 
-async function readJSONFile(filePath)
+async function readJSONFile()
 {
-    try
-    {
-        const rawData = await readFile(filePath, "utf8");
+    const privateBlobUrl = 'database.json';
 
-        const jsonObject = JSON.parse(rawData);
+    // Fetch the private file using the SDK (automatically injects your token)
+    const result = await get(privateBlobUrl, { access: 'private' });
 
-        return jsonObject;
+    if (result && result.stream) {
+        // Read the stream into text
+        const response = new Response(result.stream);
+        const content = await response.json(); // Parses stream directly as JSON
+
+        return content;
     }
 
-    catch (error)
-    {
-        console.log("error reading file", error, "\n");
-    }
+    console.log("error");
+
+    return Response.json({ error: 'File not found' }, { status: 404 });
 }
 
-async function writeJSONFile(filePath, jsonObject)
-{
-    try
-    {
-        await writeFile(tempFilePath, JSON.stringify(jsonObject), "utf8");
-    }
-
-    catch (error)
-    {
-        console.log("error writing file", error);
-    }
+async function writeJSONFile(jsonObject)
+{    
+    const blob = await put('database.json', jsonObject, { access: 'private', allowOverwrite: true });
 }
 
 router.get('/', (req, res) => {
 
-    readJSONFile(filePath).then( (theJson) => {
+    readJSONFile().then( (theJson) => {
 
         res.render("index.ejs", {studyPlanner: theJson["studyPlanner"], tracker: theJson["tracker"], 
             weak: theJson["weak"], quotes: theJson["quotes"], msgs: theJson["msgs"], messageFailed: false});
@@ -60,7 +53,7 @@ router.get('/', (req, res) => {
 
 router.post('/', async function(req, res) {
 
-    readJSONFile(tempFilePath).then( (theJson) => {
+    readJSONFile().then( (theJson) => {
 
         const { requestType, topicName, noQuestions, 
             estTime, logData, weakName, priority, 
