@@ -124,7 +124,7 @@ router.post('/', async function(req, res) {
 
                 theJson["msgs"].push({role: "model", parts: [{text: resp.text}]});
 
-                writeJSONFile(filePath, theJson);
+                writeJSONFile(theJson);
 
                 res.render("index.ejs", {studyPlanner: theJson["studyPlanner"], tracker: theJson["tracker"], 
                     weak: theJson["weak"], quotes: theJson["quotes"], msgs: theJson["msgs"], messageFailed: false});
@@ -148,9 +148,7 @@ router.post('/', async function(req, res) {
             theJson["tracker"] = [];
         }
 
-        
-
-        writeJSONFile(filePath, theJson);
+        writeJSONFile(theJson);
 
         res.render("index.ejs", {studyPlanner: theJson["studyPlanner"], tracker: theJson["tracker"], 
             weak: theJson["weak"], quotes: theJson["quotes"], msgs: theJson["msgs"], messageFailed: false});
