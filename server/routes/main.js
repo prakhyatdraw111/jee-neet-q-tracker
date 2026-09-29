@@ -37,7 +37,7 @@ async function readJSONFile()
 
 async function writeJSONFile(jsonObject)
 {    
-    const blob = await put('database.json', jsonObject, { access: 'private', allowOverwrite: true });
+    const blob = await put('database.json', JSON.stringify(jsonObject), { access: 'private', allowOverwrite: true });
 }
 
 router.get('/', (req, res) => {
